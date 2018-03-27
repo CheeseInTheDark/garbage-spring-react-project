@@ -1,0 +1,49 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.0.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'net.jmlproductions'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+task buildWebapp(type: Exec) {
+    workingDir 'webapp'
+	commandLine './build.sh'
+}
+
+task copyWebapp(type: Exec) {
+    workingDir 'webapp'
+    commandLine 'cp', 'build/bundle.js', '../build/resources/main/static'
+}
+
+task watchBundle(dependsOn: "copyWebapp") {
+    inputs.files 'webapp/build'
+    doLast {
+        println "Hi"
+    }
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	runtime('org.springframework.boot:spring-boot-devtools')
+	compileOnly('org.projectlombok:lombok')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
